@@ -1,0 +1,50 @@
+<div class="container mt-4">
+  <form [formGroup]="taskForm" (ngSubmit)="onSubmit()" class="p-4 border rounded shadow-sm bg-light">
+    <h4>{{ isEditMode() ? 'Edit Task' : 'Create Task' }}</h4>
+    <div class="mb-3">
+      <label for="title" class="form-label">Title <span class="text-danger">*</span></label>
+      <input type="text" id="title" class="form-control" formControlName="title">
+      <div *ngIf="taskForm.get('title')?.invalid && taskForm.get('title')?.touched" class="text-danger">
+        Title is required and must be 100 characters or less.
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="description" class="form-label">Description</label>
+      <textarea id="description" class="form-control" formControlName="description"></textarea>
+    </div>
+
+    <div class="mb-3">
+      <label for="dueDate" class="form-label">Due Date</label>
+      <input type="date" id="dueDate" class="form-control" formControlName="dueDate">
+    </div>
+
+    <div class="mb-3">
+      <label for="categoryId" class="form-label">Category <span class="text-danger">*</span></label>
+      <select id="categoryId" class="form-control" formControlName="categoryId">
+        <option value="">Select a category</option>
+        <option *ngFor="let category of categories()" [value]="category.categoryId">{{ category.categoryName }}</option>
+      </select>
+      <div *ngIf="taskForm.get('categoryId')?.invalid && taskForm.get('categoryId')?.touched" class="text-danger">
+        Category is required.
+      </div>
+    </div>
+
+    <div class="mb-3 form-check">
+      <input type="checkbox" id="isCompleted" class="form-check-input" formControlName="isCompleted">
+      <label for="isCompleted" class="form-check-label">Completed</label>
+    </div>
+
+    <button type="submit" class="btn btn-primary" [disabled]="taskForm.invalid || isLoading()">
+      {{ isLoading() ? 'Submitting...' : (isEditMode() ? 'Update Task' : 'Create Task') }}
+    </button>
+    <button type="button" class="btn btn-secondary ms-2" (click)="router.navigate(['/tasks'])" *ngIf="isEditMode()">Cancel</button>
+
+    <div *ngIf="errorMessage()" class="alert alert-danger mt-3">
+      {{ errorMessage() }}
+    </div>
+    <div *ngIf="successMessage()" class="alert alert-success mt-3">
+      {{ successMessage() }}
+    </div>
+  </form>
+</div>

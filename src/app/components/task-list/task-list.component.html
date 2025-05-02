@@ -1,0 +1,63 @@
+<div class="container mt-4">
+  <h4>Task List</h4>
+  <div class="mb-3">
+    <select class="form-control" (change)="filterByStatus($event)">
+      <option value="all">All Tasks</option>
+      <option value="completed">Completed</option>
+      <option value="pending">Pending</option>
+    </select>
+  </div>
+  <button class="btn btn-danger mb-3" (click)="bulkDelete()" [disabled]="selectedTaskIds().length === 0">
+    Delete Selected ({{ selectedTaskIds().length }})
+  </button>
+  <div *ngIf="isLoading()" class="text-center">
+    <div class="spinner-border" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+  <!-- <div class="mb-3">
+    <select class="form-control" (change)="filterByStatus($event.target.value)">
+      <option value="all">All Tasks</option>
+      <option value="completed">Completed</option>
+      <option value="pending">Pending</option>
+    </select>
+  </div> -->
+  <table class="table mt-3" *ngIf="tasks().length && !isLoading()">
+    <thead>
+      <tr>
+        <th><input type="checkbox" (change)="toggleAllSelection($event)" [checked]="selectedTaskIds().length === tasks().length && tasks().length > 0"></th>
+        <th>ID</th>
+        <th>Title</th>
+        <th>Description</th>
+        <th>Due Date</th>
+        <th>Category</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let task of tasks()">
+        <td><input type="checkbox" [checked]="selectedTaskIds().includes(task.taskId)" (change)="toggleSelection(task.taskId)"></td>
+        <td>{{ task.taskId }}</td>
+        <td>{{ task.title }}</td>
+        <td>{{ task.description || '-' }}</td>
+        <td>{{ task.dueDate ? (task.dueDate | date:'shortDate') : '-' }}</td>
+        <td>{{ task.categoryName || '-' }}</td>
+        <td>{{ task.isCompleted ? 'Completed' : 'Pending' }}</td>
+        <td>
+          <button class="btn btn-sm btn-outline-primary me-2" [routerLink]="['/edit', task.taskId]">Edit</button>
+          <button class="btn btn-sm btn-outline-danger" (click)="deleteTask(task.taskId)">Delete</button>
+          <button class="btn btn-sm btn-outline-success me-2" (click)="toggleTask(task.taskId)">
+            {{ task.isCompleted ? 'Undo' : 'Complete' }}
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <div *ngIf="!tasks().length && !isLoading()" class="alert alert-info">
+    No tasks found.
+  </div>
+  <div *ngIf="errorMessage()" class="alert alert-danger">
+    {{ errorMessage() }}
+  </div>
+</div>
